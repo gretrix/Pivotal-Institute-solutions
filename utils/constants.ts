@@ -2,7 +2,7 @@ export const SCHOOL_INFO = {
   name: 'Pivotal Institute Solutions',
   address: '4290 Bells Ferry Rd Ste 134 #3025, Kennesaw, GA 30144',
   phone: '(404) 374-9322',
-  email: 'jtremblay@jontremblay.com',
+  email: 'info@pivotalinstitute.com',
   description: 'Pivotal Institute Solutions is a leading provider of vocational training and professional development programs. We are committed to empowering individuals with the skills and knowledge needed to succeed in today\'s competitive job market.',
   mission: 'We offer comprehensive training programs designed to prepare students for successful careers in various industries.',
 };
