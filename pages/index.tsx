@@ -19,10 +19,6 @@ export default function Home() {
             </h1>
             <div className="space-y-4 text-lg md:text-xl mb-8">
               <p className="flex items-center justify-center">
-                <span className="mr-2">📍</span>
-                {SCHOOL_INFO.address}
-              </p>
-              <p className="flex items-center justify-center">
                 <span className="mr-2">📞</span>
                 <a href={`tel:${SCHOOL_INFO.phone}`} className="hover:underline">
                   {SCHOOL_INFO.phone}
