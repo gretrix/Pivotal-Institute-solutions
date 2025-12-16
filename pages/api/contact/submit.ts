@@ -8,6 +8,32 @@ interface ContactFormData {
   phone?: string;
   subject: string;
   message: string;
+  recaptchaToken: string;
+}
+
+async function verifyRecaptcha(token: string): Promise<boolean> {
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  
+  if (!secretKey) {
+    console.error('RECAPTCHA_SECRET_KEY is not set');
+    return false;
+  }
+
+  try {
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `secret=${secretKey}&response=${token}`,
+    });
+
+    const data = await response.json();
+    return data.success === true;
+  } catch (error) {
+    console.error('Error verifying reCAPTCHA:', error);
+    return false;
+  }
 }
 
 export default async function handler(
@@ -24,6 +50,16 @@ export default async function handler(
     // Validate required fields
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Validate reCAPTCHA
+    if (!formData.recaptchaToken) {
+      return res.status(400).json({ error: 'reCAPTCHA verification required' });
+    }
+
+    const isRecaptchaValid = await verifyRecaptcha(formData.recaptchaToken);
+    if (!isRecaptchaValid) {
+      return res.status(400).json({ error: 'reCAPTCHA verification failed. Please try again.' });
     }
 
     // Validate email format

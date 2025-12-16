@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 import Layout from '@/components/Layout';
 import { SCHOOL_INFO } from '@/utils/constants';
 
@@ -12,6 +13,7 @@ export default function Contact() {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -25,13 +27,25 @@ export default function Contact() {
     setStatus('loading');
     setErrorMessage('');
 
+    // Get reCAPTCHA token
+    const recaptchaToken = recaptchaRef.current?.getValue();
+    
+    if (!recaptchaToken) {
+      setStatus('error');
+      setErrorMessage('Please complete the reCAPTCHA verification.');
+      return;
+    }
+
     try {
       const response = await fetch('/api/contact/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken,
+        }),
       });
 
       const data = await response.json();
@@ -45,13 +59,16 @@ export default function Contact() {
           subject: '',
           message: '',
         });
+        recaptchaRef.current?.reset();
       } else {
         setStatus('error');
         setErrorMessage(data.error || 'Something went wrong. Please try again.');
+        recaptchaRef.current?.reset();
       }
     } catch (error) {
       setStatus('error');
       setErrorMessage('Failed to submit form. Please try again later.');
+      recaptchaRef.current?.reset();
     }
   };
 
@@ -232,6 +249,13 @@ export default function Contact() {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       disabled={status === 'loading'}
                     ></textarea>
+                  </div>
+
+                  <div className="mb-6">
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+                    />
                   </div>
 
                   <button
