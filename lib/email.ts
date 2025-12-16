@@ -107,9 +107,9 @@ export async function sendNotificationToJT(formData: any, formType: string) {
           <p><strong>Submitted at:</strong> ${new Date().toLocaleString()}</p>
   `;
 
-  // Add form fields
+  // Add form fields (exclude internal fields and tokens)
   for (const [key, value] of Object.entries(formData)) {
-    if (key !== 'id' && key !== 'created_at') {
+    if (key !== 'id' && key !== 'created_at' && key !== 'recaptchaToken') {
       html += `
         <div class="field">
           <div class="label">${key.charAt(0).toUpperCase() + key.slice(1)}:</div>
