@@ -83,6 +83,8 @@ export async function sendContactConfirmation(userEmail: string, userName: strin
 
 export async function sendNotificationToJT(formData: any, formType: string) {
   const jtEmail = process.env.JT_EMAIL || 'jt@pivotalinstitute.com';
+  const siteName = process.env.SITE_NAME || 'Pivotal Institute Solutions';
+  const siteUrl = process.env.SITE_URL || 'pivotalinstitute.solutions';
   
   let html = `
     <!DOCTYPE html>
@@ -92,6 +94,7 @@ export async function sendNotificationToJT(formData: any, formType: string) {
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background-color: #1e3a5f; color: white; padding: 20px; }
+        .site-badge { background-color: #f39c12; color: white; padding: 10px 15px; border-radius: 5px; display: inline-block; margin-bottom: 15px; font-size: 14px; font-weight: bold; }
         .content { padding: 20px; background-color: #f9f9f9; }
         .field { margin-bottom: 15px; }
         .label { font-weight: bold; color: #1e3a5f; }
@@ -104,6 +107,7 @@ export async function sendNotificationToJT(formData: any, formType: string) {
           <h2>New ${formType} Submission</h2>
         </div>
         <div class="content">
+          <div class="site-badge">🌐 ${siteName} (${siteUrl})</div>
           <p><strong>Submitted at:</strong> ${new Date().toLocaleString()}</p>
   `;
 
@@ -128,7 +132,7 @@ export async function sendNotificationToJT(formData: any, formType: string) {
 
   return sendEmail({
     to: jtEmail,
-    subject: `New ${formType} - Pivotal Institute Website`,
+    subject: `[${siteName}] New ${formType}`,
     html,
   });
 }
