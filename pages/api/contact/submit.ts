@@ -47,6 +47,12 @@ export default async function handler(
   try {
     const formData: ContactFormData = req.body;
 
+    // Honeypot check - if 'website' field is filled, it's a bot
+    if (req.body.website && req.body.website.trim() !== '') {
+      console.log('Blocked: Honeypot field was filled (bot detected)');
+      return res.status(400).json({ error: 'Invalid submission' });
+    }
+
     // Validate required fields
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -66,6 +72,39 @@ export default async function handler(
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       return res.status(400).json({ error: 'Invalid email address' });
+    }
+
+    // Additional bot protection layers
+    
+    // 1. Check for suspicious patterns in name (random characters)
+    const suspiciousNamePattern = /^[a-zA-Z]{20,}$/; // Long strings without spaces
+    if (suspiciousNamePattern.test(formData.name)) {
+      console.log('Blocked: Suspicious name pattern detected');
+      return res.status(400).json({ error: 'Invalid name format' });
+    }
+
+    // 2. Check message length (bots often send very short messages)
+    if (formData.message.length < 10) {
+      return res.status(400).json({ error: 'Message is too short. Please provide more details.' });
+    }
+
+    // 3. Check for gibberish in message (no vowels or all consonants)
+    const hasVowels = /[aeiouAEIOU]/.test(formData.message);
+    if (!hasVowels && formData.message.length > 5) {
+      console.log('Blocked: Message contains no vowels (likely gibberish)');
+      return res.status(400).json({ error: 'Invalid message format' });
+    }
+
+    // 4. Rate limiting check - same email submitting too frequently
+    const recentSubmissions = await query(
+      `SELECT COUNT(*) as count FROM contact_submissions 
+       WHERE email = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)`,
+      [formData.email]
+    ) as any[];
+    
+    if (recentSubmissions[0]?.count >= 3) {
+      console.log('Blocked: Too many submissions from same email');
+      return res.status(429).json({ error: 'Too many submissions. Please try again later.' });
     }
 
     // Save to database

@@ -10,6 +10,7 @@ export default function Contact() {
     phone: '',
     subject: '',
     message: '',
+    website: '', // Honeypot field - bots will fill this
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -58,6 +59,7 @@ export default function Contact() {
           phone: '',
           subject: '',
           message: '',
+          website: '', // Reset honeypot field too
         });
         recaptchaRef.current?.reset();
       } else {
@@ -209,6 +211,20 @@ export default function Contact() {
                       onChange={handleChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       disabled={status === 'loading'}
+                    />
+                  </div>
+
+                  {/* Honeypot field - hidden from humans, bots will fill it */}
+                  <div style={{ position: 'absolute', left: '-9999px' }} aria-hidden="true">
+                    <label htmlFor="website">Website</label>
+                    <input
+                      type="text"
+                      id="website"
+                      name="website"
+                      value={formData.website}
+                      onChange={handleChange}
+                      tabIndex={-1}
+                      autoComplete="off"
                     />
                   </div>
 
