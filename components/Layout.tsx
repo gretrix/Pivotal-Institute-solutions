@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Header from './Header';
 import Footer from './Footer';
 
@@ -9,6 +10,9 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, title = 'Pivotal Institute Solutions' }: LayoutProps) {
+  const router = useRouter();
+  const canonicalUrl = `https://pivotalinstitute.solutions${router.asPath.split('?')[0]}`;
+  
   return (
     <>
       <Head>
@@ -16,6 +20,7 @@ export default function Layout({ children, title = 'Pivotal Institute Solutions'
         <meta name="description" content="Pivotal Institute Solutions - Vocational Training Programs" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo.png" />
+        <link rel="canonical" href={canonicalUrl} />
       </Head>
       <div className="flex flex-col min-h-screen">
         <Header />

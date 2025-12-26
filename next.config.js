@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  trailingSlash: false, // Remove trailing slashes to avoid duplicates
   async redirects() {
     return [
       {
