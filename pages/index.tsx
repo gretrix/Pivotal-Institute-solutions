@@ -6,7 +6,10 @@ import { SCHOOL_INFO, PROGRAMS } from '@/utils/constants';
 
 export default function Home() {
   return (
-    <Layout title={`${SCHOOL_INFO.name} - Home`}>
+    <Layout 
+      title="Pivotal Institute Solutions - Vocational Training Programs in Kennesaw, GA"
+      description="Pivotal Institute Solutions offers comprehensive vocational training in Healthcare Assistant, IT Support, Business Administration, and Welding Technology. Start your career today in Kennesaw, GA. Call (404) 374-9322."
+    >
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white py-20">
         <div className="container mx-auto px-4">

@@ -75,7 +75,10 @@ export default function Contact() {
   };
 
   return (
-    <Layout title={`Contact Us - ${SCHOOL_INFO.name}`}>
+    <Layout 
+      title="Contact Pivotal Institute Solutions - Kennesaw, GA | (404) 374-9322"
+      description="Contact Pivotal Institute Solutions for information about our vocational training programs. Located in Kennesaw, GA. Call (404) 374-9322 or email info@pivotalinstitute.com. We're here to help!"
+    >
       {/* Hero */}
       <section className="bg-primary text-white py-16">
         <div className="container mx-auto px-4">
